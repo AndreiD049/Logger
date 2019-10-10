@@ -32,6 +32,7 @@ class LoggingFile:
         elif self.uuid == '':
             result = ''
             self.check_uuid()
+            self.readline()
         return result
 
     def readlines(self):
@@ -41,6 +42,7 @@ class LoggingFile:
         elif self.uuid == '':
             result = ''
             self.check_uuid()
+            self.readlines()
         return result
 
     def check_uuid(self):

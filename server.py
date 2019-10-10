@@ -44,7 +44,7 @@ class ServerJSON(Server):
                 lines = log_file.readlines()
                 if lines:
                     result.setdefault(log_file.label, [json.loads(line) for line in lines])
-        return json.dumps(result) if result != {} else ""     
+        return json.dumps(result) if result != {} else ""
 
 class ExecFile:
 
@@ -63,14 +63,10 @@ class ExecFile:
                 self._logset.add(logfile_base)
 
 if __name__ == "__main__":
-    s = Server((ExecFile(r"C:\Users\User\Documents\Py\testlog.py", ["Main"]), ExecFile(r"client.py", ["Label"])))
-    # s = Server()
+    s = ServerJSON((ExecFile(r"C:\Users\User\Documents\Py\testlog.py", ["Main"]), ExecFile(r"client.py", ["Label"])))
+    
     while True:
         result = s.get_messages()
         print(result, end='')
         import sys
         sys.stdout.flush()
-        # time.sleep(3)
-        # for fdk in k:
-        #     message = s.fds[fdk].readline()
-        #     if message.strip(): print(message, end='')

@@ -53,7 +53,7 @@ class ClientLoggerJSON(ClientLogger):
 
 
 if __name__ == "__main__":
-    l = ClientLoggerJSON("Label", __file__, delete=False)
+    l = ClientLoggerJSON("Main2", __file__, delete=False)
     # time.sleep(5)
     for i in range(1000):
         l.logif( i % 2 == 0, "Value %s is even" % i, "Value %s is odd" % i, .01)
