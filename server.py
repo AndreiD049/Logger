@@ -21,7 +21,7 @@ class Server:
     def file_monitor(self):
         while True:
             for exec_file in self.exec_files:
-                exec_file.check_new_logfiles()
+                exec_file.check_new_logfiles(False)
             time.sleep(1)
 
     def get_messages(self):
@@ -53,17 +53,20 @@ class ExecFile:
         self.basename = os.path.split(executable)[1]
         self.logfiles = [LoggingFile(_log_path, label, executable, _MODE_READ) for label in labels]
         self._logset = set([os.path.split(logfile.path)[1] for logfile in self.logfiles])
+        # check the log files for this executable that already are in the folder
+        # those files are considered as existing files and thus will not be read from beggining
+        self.check_new_logfiles(True)
 
-    def check_new_logfiles(self):
+    def check_new_logfiles(self, existing=True):
         for logfile in glob.glob(os.path.join(_log_path, f"{self.basename}*")):
             logfile_base = os.path.split(logfile)[1]
             logfile_label = logfile.split(f"{self.basename}-")[1]
             if not logfile_base in self._logset:
-                self.logfiles.append(LoggingFile(_log_path, logfile_label, self.executable, _MODE_READ))
+                self.logfiles.append(LoggingFile(_log_path, logfile_label, self.executable, _MODE_READ, existing))
                 self._logset.add(logfile_base)
 
 if __name__ == "__main__":
-    s = ServerJSON((ExecFile(r"C:\Users\User\Documents\Py\testlog.py", ["Main"]), ExecFile(r"client.py", ["Label"])))
+    s = ServerJSON((ExecFile(r"C:\Users\User\Documents\Py\test.py", []), ))
     
     while True:
         result = s.get_messages()

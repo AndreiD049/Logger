@@ -8,12 +8,21 @@ _MODE_CREATE = 'x'
 
 class LoggingFile:
 
-    def __init__(self, path, label, executable, mode):
+    def __init__(self, path, label, executable, mode, existing=True):
+        """
+            @path: path to the log folder (./logs)
+            @label: label of the log file (ex: Main, Secondary etc)
+            @executable: the fullpath to the executable program, or just the name (usually the __file__)
+            @mode: mode to open the file (read/write/create)
+            @existing: boolean, representing whether this is a new file or an existing one remaining from past executions.
+                If it's an existing file, it's file pointer will be moved to the end of the file, else it will be read from the beggining
+        """
         self.label = label
         self.executable = executable
         self.basename = os.path.split(executable)[1]
         self.mode = mode
         self.uuid = ''
+        self.existing = existing
         self.path = os.path.join(path, f"{self.basename}-{self.label}")
         self.fd = self.open_file()
 
@@ -65,5 +74,8 @@ class LoggingFile:
             fd.write(self.uuid)
         else:
             self.uuid = fd.read(_UUID_LENGTH)
-            fd.seek(0, os.SEEK_END)
+            if self.existing:
+                fd.seek(0, os.SEEK_END)
+            else:
+                fd.seek(_UUID_LENGTH + 2)
         return fd

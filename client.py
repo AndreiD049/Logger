@@ -23,30 +23,32 @@ class ClientLogger:
     def __del__(self):
         if self.delete: os.remove(self.fd.name)
 
-    def log(self, message):
+    def log(self, message, type_msg="INFO", context=""):
         self.fd.write(message + '\n')
         self.fd.flush()
     
-    def logif(self, expression, message, else_message=None, seconds=0):
+    def logif(self, expression, message, else_message=None, type_msg="INFO", context="", seconds=0):
         if expression:
-            self.log(message)
+            self.log(message, type_msg, context)
             if seconds: sleep(seconds)
         elif else_message:
-            self.log(else_message)
+            self.log(else_message, type_msg, context)
             if seconds: sleep(seconds)
 
-    def log_n_wait(self, message, seconds):
-        self.log(message)
+    def log_n_wait(self, message, type_msg="INFO", context="", seconds=0):
+        self.log(message, type_msg, context)
         sleep(seconds)
 
 class ClientLoggerJSON(ClientLogger):
 
-    def log(self, message):
+    def log(self, message, type_msg="INFO", context=""):
         import json
 
         new_message = {
             "time": datetime.datetime.now().strftime("%H:%M:%S.%f"),
-            "message": message
+            "message": message,
+            "type": type_msg,
+            "context": context
         }
         self.fd.write(json.dumps(new_message) + '\n')
         self.fd.flush()
